@@ -15,10 +15,10 @@ export function BrandLogo({
   return (
     <span className={`relative inline-flex shrink-0 ${className}`}>
       <Image
-        src="/blind.png"
+        src="/logo-main.png"
         alt=""
-        width={240}
-        height={240}
+        width={600}
+        height={600}
         priority={priority}
         className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${
           onDark ? "brightness-125 contrast-90" : ""

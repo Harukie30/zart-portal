@@ -44,11 +44,12 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
     }
 
     let frame = 0;
+    let mobile = window.innerWidth < 640;
+    let lastProgress = -1;
 
     const update = () => {
       const rect = section.getBoundingClientRect();
       const viewH = window.innerHeight;
-      const mobile = window.innerWidth < 640;
 
       const start = viewH * 0.92;
       const end = viewH * (mobile ? 0.28 : 0.18);
@@ -56,6 +57,12 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
         Math.max((start - rect.top) / (start - end), 0),
         1,
       );
+
+      // Idle while hero is in view (progress stuck at 0) or fully settled
+      if (progress === lastProgress && (progress === 0 || progress === 1)) {
+        return;
+      }
+      lastProgress = progress;
 
       const ease = 1 - Math.pow(1 - progress, 2.6);
       const lift = (1 - ease) * (mobile ? 170 : 320);
@@ -96,14 +103,20 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
       frame = requestAnimationFrame(update);
     };
 
+    const onResize = () => {
+      mobile = window.innerWidth < 640;
+      lastProgress = -1;
+      onScroll();
+    };
+
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [ready]);
 

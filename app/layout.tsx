@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Manrope } from "next/font/google";
+import { Syne, Manrope, Geist } from "next/font/google";
 import { PortalLoader } from "@/components/portal-loader";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const syne = Syne({
   variable: "--font-syne",
@@ -19,8 +22,8 @@ export const metadata: Metadata = {
   title: "Vision Engine",
   description: "Building ideas into interactive experiences.",
   icons: {
-    icon: "/blind.png",
-    apple: "/blind.png",
+    icon: "/logo-main.png",
+    apple: "/logo-main.png",
   },
 };
 
@@ -39,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${manrope.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", syne.variable, manrope.variable, "font-sans", geist.variable)}
     >
       <body className="flex min-h-full min-w-0 flex-col overflow-x-hidden font-sans">
         <PortalLoader>{children}</PortalLoader>

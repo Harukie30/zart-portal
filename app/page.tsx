@@ -17,7 +17,7 @@ export default function Home() {
         <SiteHeader />
 
         <HeroSection>
-          <h1 className="animate-rise-delay-1 font-display text-[clamp(2.55rem,13vw,8.5rem)] font-extrabold leading-[0.92] tracking-[-0.04em] text-balance text-paper">
+          <h1 className="animate-rise-delay-1 origin-left scale-95 font-display text-[clamp(2.55rem,13vw,8.5rem)] font-extrabold leading-[0.92] tracking-[-0.04em] text-balance text-paper">
             Vision Engine
           </h1>
           <p className="animate-rise-delay-2 mt-5 max-w-xl text-base leading-relaxed text-pretty text-paper/80 sm:mt-8 sm:text-xl">
