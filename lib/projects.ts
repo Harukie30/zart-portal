@@ -36,4 +36,14 @@ export const projects: Project[] = [
   description: "A karaoke website with a song library",
   href: "https://stuido-zero.vercel.app/",
 },
+{
+  title: "Mangrove Apartelle",
+  description: "A apartelle website with a booking system.",
+  href: "https://mangrove-apartelle.vercel.app/",
+},
+{
+  title: "Pickleball App",
+  description: "A apartelle website with a booking system.",
+  href: "https://pickle-monitor-io.vercel.app/",
+},
 ];
