@@ -43,7 +43,7 @@ export const projects: Project[] = [
 },
 {
   title: "Pickleball App",
-  description: "A apartelle website with a booking system.",
-  href: "https://pickle-monitor-io.vercel.app/",
+  description: "Live court timers, rentals, built for pickleball facilities running a busy front desk. ",
+  href: "https://pickle-monitor-net.vercel.app/",
 },
 ];
