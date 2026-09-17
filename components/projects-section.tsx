@@ -1,21 +1,64 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { usePortalLoader } from "@/components/portal-loader";
-import type { Project } from "@/lib/projects";
+import { projectInitials, type Project } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 
 type ProjectsSectionProps = {
   projects: Project[];
   heading: ReactNode;
 };
 
+function ProjectPoster({
+  project,
+  className = "",
+  featured = false,
+}: {
+  project: Project;
+  className?: string;
+  featured?: boolean;
+}) {
+  const accent = project.accent ?? "#0c3b38";
+  const initials = projectInitials(project.title);
+
+  return (
+    <div
+      className={cn("project-poster", featured && "project-poster--featured", className)}
+      style={
+        {
+          "--poster-accent": accent,
+        } as CSSProperties
+      }
+    >
+      <span className="project-poster__glow" aria-hidden="true" />
+      <span className="project-poster__grid" aria-hidden="true" />
+      <span className="project-poster__mark" aria-hidden="true">
+        {initials}
+      </span>
+      {project.tag ? (
+        <span className="project-poster__tag">{project.tag}</span>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
   const { ready } = usePortalLoader();
+
+  const featured = projects[0] ?? null;
+  const railProjects = useMemo(() => projects.slice(1), [projects]);
 
   useEffect(() => {
     if (!ready) return;
@@ -34,12 +77,6 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
       shell.style.borderRadius = "0px";
       panel.style.transform = "none";
       panel.style.opacity = "1";
-      listRef.current
-        ?.querySelectorAll<HTMLElement>("[data-project-item]")
-        .forEach((item) => {
-          item.style.transform = "none";
-          item.style.opacity = "1";
-        });
       return;
     }
 
@@ -58,44 +95,26 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
         1,
       );
 
-      // Idle while hero is in view (progress stuck at 0) or fully settled
       if (progress === lastProgress && (progress === 0 || progress === 1)) {
         return;
       }
       lastProgress = progress;
 
       const ease = 1 - Math.pow(1 - progress, 2.6);
-      const lift = (1 - ease) * (mobile ? 170 : 320);
-      const scale = 0.88 + ease * 0.12;
-      const growPad = mobile ? 14 + ease * 36 : 28 + ease * 72;
-
-      // Start inset on the sides, expand out to full width while scrolling
-      const inset = (1 - ease) * (mobile ? 18 : 72);
-      const radius = (1 - ease) * (mobile ? 16 : 28);
+      const lift = (1 - ease) * (mobile ? 120 : 220);
+      const scale = 0.92 + ease * 0.08;
+      const growPad = mobile ? 14 + ease * 28 : 24 + ease * 48;
+      const inset = (1 - ease) * (mobile ? 14 : 48);
+      const radius = (1 - ease) * (mobile ? 16 : 24);
 
       shell.style.marginInline = `${inset}px`;
       shell.style.borderRadius = `${radius}px`;
       shell.style.borderWidth = ease > 0.92 ? "0px" : "1px";
 
       panel.style.transform = `translate3d(0, ${lift}px, 0) scale(${scale})`;
-      panel.style.opacity = String(0.35 + ease * 0.65);
+      panel.style.opacity = String(0.4 + ease * 0.6);
       panel.style.paddingTop = `${growPad}px`;
       panel.style.paddingBottom = `${growPad}px`;
-
-      const items = listRef.current?.querySelectorAll<HTMLElement>(
-        "[data-project-item]",
-      );
-      items?.forEach((item, index) => {
-        const staggered = Math.min(
-          Math.max((progress - index * (mobile ? 0.08 : 0.1)) / 0.55, 0),
-          1,
-        );
-        const itemEase = 1 - Math.pow(1 - staggered, 2.2);
-        const itemLift = (1 - itemEase) * (mobile ? 72 : 120);
-
-        item.style.transform = `translate3d(0, ${itemLift}px, 0)`;
-        item.style.opacity = String(itemEase);
-      });
     };
 
     const onScroll = () => {
@@ -129,65 +148,109 @@ export function ProjectsSection({ projects, heading }: ProjectsSectionProps) {
       <div
         ref={shellRef}
         className="projects-shell overflow-hidden border border-line/80 bg-paper shadow-[0_18px_50px_rgba(16,34,42,0.06)] will-change-[margin,border-radius]"
-        style={{ marginInline: "72px", borderRadius: "28px" }}
+        style={{ marginInline: "48px", borderRadius: "24px" }}
       >
         <div
           ref={panelRef}
-          className="projects-panel mx-auto max-w-5xl origin-top px-4 will-change-transform sm:px-10 lg:px-16"
+          className="projects-panel mx-auto max-w-6xl origin-top px-0 will-change-transform sm:px-6 lg:px-10"
           style={{
-            transform: "translate3d(0, 260px, 0) scale(0.88)",
-            opacity: 0.28,
+            transform: "translate3d(0, 180px, 0) scale(0.92)",
+            opacity: 0.35,
           }}
         >
-          <div className="mb-8 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-6 flex flex-col gap-3 px-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:px-4">
             <div className="max-w-2xl">{heading}</div>
             <p className="text-xs font-semibold tracking-[0.18em] uppercase text-ink-soft/80">
-              {String(projects.length).padStart(2, "0")} selected
+              {String(projects.length).padStart(2, "0")} titles
             </p>
           </div>
 
           {projects.length === 0 ? (
-            <div className="min-h-36 border border-dashed border-line px-4 py-12 sm:min-h-48 sm:px-10 sm:py-16" />
+            <div className="mx-4 min-h-36 border border-dashed border-line px-4 py-12 sm:min-h-48 sm:px-10 sm:py-16" />
           ) : (
-            <ul ref={listRef} className="flex flex-col gap-3 sm:gap-4">
-              {projects.map((project, index) => (
-                <li
-                  key={project.href + project.title}
-                  data-project-item
-                  className="will-change-transform"
-                  style={{ opacity: 0, transform: "translate3d(0, 100px, 0)" }}
+            <div className="flex flex-col gap-8 sm:gap-10">
+              {featured ? (
+                <a
+                  href={featured.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="project-billboard group mx-4 overflow-hidden sm:mx-4"
                 >
-                  <a
-                    href={project.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative flex flex-col gap-4 border border-line bg-[rgba(255,255,255,0.55)] px-4 py-5 transition-colors hover:border-brand/25 hover:bg-white sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-6 sm:py-6"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-y-0 left-0 w-0 bg-signal transition-[width] duration-300 group-hover:w-1"
-                    />
-                    <div className="flex min-w-0 items-start gap-4 sm:gap-5">
-                      <span className="mt-1 font-display text-sm font-semibold tracking-wide text-brand/55 sm:text-base">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="font-display text-xl font-semibold tracking-tight text-ink transition-colors group-hover:text-brand sm:text-2xl">
-                          {project.title}
-                        </h3>
-                        <p className="mt-2 max-w-xl text-sm leading-relaxed text-pretty text-ink-soft sm:text-base">
-                          {project.description}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="inline-flex shrink-0 items-center gap-2 self-start text-sm font-semibold tracking-wide text-signal transition-transform duration-300 group-hover:translate-x-1 sm:self-center">
-                      Visit
+                  <ProjectPoster project={featured} featured />
+                  <div className="project-billboard__content">
+                    {featured.tag ? (
+                      <p className="text-[0.65rem] font-semibold tracking-[0.16em] uppercase text-paper/55">
+                        Featured · {featured.tag}
+                      </p>
+                    ) : (
+                      <p className="text-[0.65rem] font-semibold tracking-[0.16em] uppercase text-paper/55">
+                        Featured
+                      </p>
+                    )}
+                    <h3 className="mt-2 font-display text-3xl font-bold tracking-tight text-paper sm:text-4xl md:text-5xl">
+                      {featured.title}
+                    </h3>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-pretty text-paper/75 sm:text-base">
+                      {featured.description}
+                    </p>
+                    <span className="project-billboard__cta mt-5 inline-flex min-h-11 items-center gap-2 bg-signal px-5 text-sm font-semibold text-paper transition-colors group-hover:bg-signal-hover">
+                      Open project
                       <span aria-hidden="true">→</span>
                     </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+                  </div>
+                </a>
+              ) : null}
+
+              {railProjects.length > 0 ? (
+                <div className="project-rail">
+                  <div className="mb-3 flex items-end justify-between px-4 sm:px-4">
+                    <h3 className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">
+                      All projects
+                    </h3>
+                    <p className="text-xs tracking-wide text-ink-soft">
+                      Scroll to browse
+                    </p>
+                  </div>
+
+                  <Carousel
+                    opts={{
+                      align: "start",
+                      loop: false,
+                      dragFree: true,
+                    }}
+                    className="project-rail__carousel w-full"
+                  >
+                    <CarouselContent className="-ml-3 px-4 sm:-ml-4 sm:px-4">
+                      {railProjects.map((project) => (
+                        <CarouselItem
+                          key={project.href + project.title}
+                          className="basis-[78%] pl-3 sm:basis-[46%] sm:pl-4 md:basis-[34%] lg:basis-[28%]"
+                        >
+                          <a
+                            href={project.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-card group block"
+                          >
+                            <ProjectPoster project={project} />
+                            <div className="project-card__meta">
+                              <h4 className="font-display text-base font-semibold tracking-tight text-ink transition-colors group-hover:text-brand sm:text-lg">
+                                {project.title}
+                              </h4>
+                              <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-ink-soft">
+                                {project.description}
+                              </p>
+                            </div>
+                          </a>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="project-rail__nav left-2 hidden border-line bg-paper/90 text-ink shadow-sm sm:flex" />
+                    <CarouselNext className="project-rail__nav right-2 hidden border-line bg-paper/90 text-ink shadow-sm sm:flex" />
+                  </Carousel>
+                </div>
+              ) : null}
+            </div>
           )}
         </div>
       </div>

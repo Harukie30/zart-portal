@@ -330,6 +330,183 @@ body {
   animation: header-glitch-shake 0.75s linear both reverse;
 }
 
+.project-billboard {
+  position: relative;
+  display: block;
+  min-height: 16rem;
+  isolation: isolate;
+  border: 1px solid rgba(16, 34, 42, 0.1);
+  background: #062422;
+  color: var(--paper);
+}
+
+@media (min-width: 640px) {
+  .project-billboard {
+    min-height: 22rem;
+  }
+}
+
+.project-billboard .project-poster {
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
+  border-radius: 0;
+}
+
+.project-billboard__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: inherit;
+  max-width: 36rem;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem 1.25rem 1.5rem;
+  background: linear-gradient(
+    90deg,
+    rgba(6, 36, 34, 0.92) 0%,
+    rgba(6, 36, 34, 0.72) 48%,
+    transparent 100%
+  );
+}
+
+@media (min-width: 640px) {
+  .project-billboard__content {
+    padding: 2rem 2.25rem 2.25rem;
+  }
+}
+
+.project-billboard__cta {
+  width: fit-content;
+}
+
+.project-poster {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 18% 20%,
+      color-mix(in srgb, var(--poster-accent, #0c3b38) 70%, white),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 55% 50% at 88% 78%,
+      rgba(196, 92, 38, 0.35),
+      transparent 55%
+    ),
+    linear-gradient(
+      145deg,
+      #062422 0%,
+      var(--poster-accent, #0c3b38) 48%,
+      #0a2e2c 100%
+    );
+}
+
+.project-poster__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 10% 20% auto;
+  height: 40%;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(238, 242, 244, 0.16),
+    transparent 70%
+  );
+}
+
+.project-poster__grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(rgba(238, 242, 244, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 242, 244, 0.45) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+}
+
+.project-poster__mark {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.55rem;
+  font-family: var(--font-syne), system-ui, sans-serif;
+  font-size: clamp(2.8rem, 8vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  color: rgba(238, 242, 244, 0.14);
+}
+
+.project-poster__tag {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  border: 1px solid rgba(238, 242, 244, 0.2);
+  background: rgba(6, 36, 34, 0.45);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(238, 242, 244, 0.8);
+}
+
+.project-card {
+  overflow: hidden;
+  border: 1px solid rgba(16, 34, 42, 0.1);
+  background: rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
+}
+
+.project-card:hover,
+.project-card:focus-visible {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(12, 59, 56, 0.28);
+  box-shadow: 0 18px 40px rgba(16, 34, 42, 0.12);
+  outline: none;
+}
+
+.project-card__meta {
+  padding: 0.9rem 1rem 1.1rem;
+}
+
+.project-rail {
+  position: relative;
+}
+
+.project-rail__carousel {
+  isolation: isolate;
+}
+
+.project-rail__carousel [data-slot="carousel-content"] {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+}
+
+.project-rail__nav {
+  z-index: 3;
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
 .tech-carousel--vertical .tech-carousel__track {
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -817,6 +994,12 @@ html.portal-loading body {
   .site-header__glitch,
   .site-header__glitch-bar {
     animation: none !important;
+  }
+
+  .project-card:hover,
+  .project-card:focus-visible {
+    transform: none;
+    box-shadow: none;
   }
 }
 

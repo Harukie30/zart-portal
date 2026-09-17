@@ -55,8 +55,7 @@ export default function Home() {
                 Projects
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-pretty text-ink-soft sm:mt-4 sm:text-base md:text-lg">
-                Selected builds and experiments. Open any project to explore it
-                live.
+                Browse selected builds. Open any title to explore it live.
               </p>
             </>
           }
