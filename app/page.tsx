@@ -5,6 +5,7 @@ import { ProjectsSection } from "@/components/projects-section";
 import { Reveal } from "@/components/reveal";
 import { SiteHeader } from "@/components/site-header";
 import { SocialIcon } from "@/components/social-icon";
+import { VisitorCount } from "@/components/visitor-count";
 import { projects } from "@/lib/projects";
 import { socialLinks } from "@/lib/socials";
 
@@ -44,6 +45,9 @@ export default function Home() {
             >
               Browse projects
             </a>
+          </div>
+          <div className="mt-6">
+            <VisitorCount />
           </div>
         </HeroSection>
 
