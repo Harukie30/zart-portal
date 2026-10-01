@@ -2,34 +2,44 @@
 
 import { useEffect, useState } from "react";
 
-export function VisitorCount() {
-  const [count, setCount] = useState<number | null>(null);
+let visitRequest: Promise<number> | null = null;
 
-  useEffect(() => {
-    let cancelled = false;
-    const visitKey = "ve-visit-posted";
-    const alreadyPosted = sessionStorage.getItem(visitKey) === "1";
-
-    if (!alreadyPosted) {
-      sessionStorage.setItem(visitKey, "1");
-    }
-
-    fetch("/api/visits", { method: alreadyPosted ? "GET" : "POST" })
+function recordVisit() {
+  if (!visitRequest) {
+    visitRequest = fetch("/api/visits", { method: "POST", cache: "no-store" })
       .then((response) => {
         if (!response.ok) throw new Error("visit count failed");
         return response.json() as Promise<{ count?: number }>;
       })
       .then((data) => {
-        if (cancelled || typeof data.count !== "number") return;
-        setCount(data.count);
+        if (typeof data.count !== "number") throw new Error("invalid count");
+        return data.count;
+      })
+      .catch((error) => {
+        visitRequest = null;
+        throw error;
+      });
+  }
+
+  return visitRequest;
+}
+
+export function VisitorCount() {
+  const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    recordVisit()
+      .then((next) => {
+        if (!ignore) setCount(next);
       })
       .catch(() => {
-        if (!alreadyPosted) sessionStorage.removeItem(visitKey);
-        if (!cancelled) setCount(null);
+        if (!ignore) setCount(null);
       });
 
     return () => {
-      cancelled = true;
+      ignore = true;
     };
   }, []);
 

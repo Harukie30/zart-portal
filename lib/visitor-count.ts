@@ -26,14 +26,21 @@ async function writeStore(store: VisitorStore) {
   await fs.writeFile(filePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 }
 
+let writeChain: Promise<number> = Promise.resolve(0);
+
 export async function getVisitorCount() {
   const store = await readStore();
   return store.count;
 }
 
 export async function incrementVisitorCount() {
-  const store = await readStore();
-  const next = store.count + 1;
-  await writeStore({ count: next });
-  return next;
+  const result = writeChain.then(async () => {
+    const store = await readStore();
+    const next = store.count + 1;
+    await writeStore({ count: next });
+    return next;
+  });
+
+  writeChain = result.catch(() => getVisitorCount());
+  return result;
 }
